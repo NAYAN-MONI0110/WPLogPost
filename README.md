@@ -1,11 +1,10 @@
 
 
 # WordPress Website Testing Tool
+**Version: 1.0 — Author: Mr.valentine (NAYAN) "don't miind the name "**
 
-A small, practical Python script to help you verify WordPress authentication and user-exposure issues.
-Version: 1.0 — Author: Mr.valentine (NAYAN) "don't miind the name "
-![Demo Video](WPLogPost/assets/demovd.gif)
-Repo: GitHub
+![Demo Video](assets/demovd.gif)
+
 
 ---
 
