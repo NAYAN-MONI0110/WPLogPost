@@ -1,261 +1,408 @@
 
 
 # WordPress Website Testing Tool
-**Version: 1.0 — Author: Mr.valentine (NAYAN) "don't miind the name "**
+**Version: 2.0 — Author: Mr.valentine (NAYAN) "don't miind the name "**
 
-![Demo Video](assets/demovd.gif)
-
-
----
-
+![Demo Video](assets/demovd1.gif)
 
 ```
  ██     ██ ██████  ██       ██████   ██████  ██████   ██████  ███████ ███████ 
  ██     ██ ██   ██ ██      ██    ██ ██       ██   ██ ██    ██ ██      ██      
  ██  █  ██ ██████  ██      ██    ██ ██   ███ ██████  ██    ██ ███████ █████   
  ██ ███ ██ ██      ██      ██    ██ ██    ██ ██      ██    ██      ██ ██      
-  ███ ███  ██      ███████  ██████   ██████  ██       ██████  ███████ ███████
-    WordPress Testing Toolkit
-    by  Mr.valentine(NAYAN)
-    For details visit:                ver: 1.0
+  ███ ███  ██      ███████  ██████   ██████  ██       ██████  ███████ ███████ 
 ```
 
-**Authorized security testing tool for WordPress websites.**  
-This toolkit helps penetration testers and site owners identify weak credentials through multiple attack vectors, user enumeration, and intelligent success detection.
+# WP_Log_Pose
+### WordPress Testing Toolkit
 
-[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Linux-orange?style=flat-square&logo=linux)](https://linux.org)
+[![Version](https://img.shields.io/badge/Version-2.0.0-red?style=flat-square)](https://github.com)
+
+*by Mr.valentine(NAYAN) — "don't mind the name"*
+
+**For authorised security testing only.**
+
+</div>
+
+---
+
+## ⚠️ Legal Disclaimer
+
+> This tool is strictly for **authorised penetration testing and security research**.
+> You must have **explicit written permission** from the target system owner before use.
+> Unauthorised use may violate computer fraud laws in your jurisdiction.
+> The author assumes **zero liability** for any misuse of this tool.
 
 ---
 
 ## 📖 Table of Contents
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Attack Modes](#attack-modes)
-- [Examples](#examples)
-- [Configuration Summary UI](#configuration-summary-ui)
-- [How It Works](#how-it-works)
-- [Batch Size Limits](#batch-size-limits)
-- [Legal Disclaimer](#legal-disclaimer)
-- [Credits](#credits)
+
+- [Overview](#-overview)
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Commands](#-commands)
+  - [enumerate](#enumerate)
+  - [vuln](#vuln)
+  - [bruteforce](#bruteforce)
+  - [auto](#auto)
+- [Options](#-options)
+- [Output Formats](#-output-formats)
+- [Examples](#-examples)
+- [File Structure](#-file-structure)
+
+---
+
+## 🔍 Overview
+
+WP_Log_Pose is a modular WordPress security testing toolkit. It combines user enumeration, vulnerability scanning, and credential brute-forcing into a single unified command-line interface.
 
 ---
 
 ## ✨ Features
 
-- **User Enumeration** – Discover WordPress usernames via:
-  - REST API (`/wp-json/wp/v2/users`)
-  - Author archives (`/?author=1`, `/?author=2`, …)
-  - oEmbed endpoint (`/wp-json/oembed/1.0/embed`)
-
-- **Multiple Attack Vectors**
-  - `xmlrpc` – Amplified brute‑force using `system.multicall`
-  - `wplogin` – Traditional POST‑based attack on `wp-login.php`
-  - `restapi` – HTTP Basic Auth against the REST API
-  - `all` – Try all methods sequentially
-
-- **Smart XML‑RPC Detection** – Looks for `<blogid>` in the response – the most reliable indicator of a successful login.
-
-- **Proxy Support** – HTTP, HTTPS, and SOCKS (e.g., Tor) proxies.
-
-- **Progress Feedback** – Batch messages for XML‑RPC; every‑10‑attempts progress for other modes.
-
-- **Connectivity Test** – Verifies XML‑RPC is alive before attacking.
-
-- **Resume Capability** – Track tested passwords with `--resume`.
-
-- **Custom User‑Agents** – Rotate realistic browser agents or supply your own list.
-
-- **Output Saving** – Append found credentials to a file.
-
-- **Configuration Summary UI** – Clean, colorful table showing all settings before starting.
+| Feature | Description |
+|---|---|
+| 👤 **User Enumeration** | 4 independent methods — REST API, author archives, oEmbed, sitemap |
+| 🛡️ **Vulnerability Scanner** | 10 passive checks — headers, debug.log, XML-RPC, path disclosure, and more |
+| 🔓 **Brute-force** | Threaded attacks via XML-RPC, wp-login.php, and REST API |
+| 🤖 **Auto Mode** | Detects available vectors and attacks automatically |
+| 📊 **5 Output Formats** | txt, json, csv, html, markdown |
+| ⚡ **Fast & Threaded** | Concurrent requests with cooperative cancellation |
+| 💾 **Memory Efficient** | Streams wordlists — never loads full file into RAM |
 
 ---
 
-## 📦 Requirements
+## 📦 Installation
 
-- Python 3.6 or higher
-- `requests` library
+### Requirements
 
-### Installing `requests`
+```
+Python 3.10+
+requests
+urllib3
+```
+
+### Install dependencies
 
 ```bash
-pip install requests
+pip install requests urllib3
 ```
 
-**For Kali Linux (2024.4+):**  
-Use `pipx` or a virtual environment (see [Kali’s Python documentation](https://www.kali.org/docs/general-use/python3-external-packages/)).
-
----
-
-## 🔧 Installation
-
-1. **Clone the repository** (or download the script directly):
-   ```bash
-   git clone https://github.com/yourusername/wordpress-testing-toolkit.git
-   cd wordpress-testing-toolkit
-   ```
-
-2. **Make the script executable** (optional):
-   ```bash
-   chmod +x wp_toolkit.py
-   ```
-
-3. **Install dependencies** (if not already done).
-
----
-
-## 🚀 Usage
+### Setup
 
 ```bash
-python3 wp_toolkit.py -u <URL> -m <mode> [options]
+# Clone or download the repository
+git clone https://github.com/yourusername/WP_Log_Pose.git
+cd WP_Log_Pose/..
+
+# Run directly as a module from the parent directory
+python3 -m WP_Log_Pose.main --help
 ```
 
-### Required Arguments
+> ⚠️ **Important:** Always run from the **parent directory** of `WP_Log_Pose/`, not from inside it.
 
-| Short | Long      | Description                          |
-|-------|-----------|--------------------------------------|
-| `-u`  | `--url`   | Target WordPress URL (e.g., `https://example.com`) |
+### Optional — Add a shell alias
 
-### Optional Arguments
-
-| Short | Long            | Description                                      | Default     |
-|-------|-----------------|--------------------------------------------------|-------------|
-| `-w`  | `--wordlist`    | Password wordlist file (required for brute‑force) | –           |
-| `-U`  | `--usernames`   | Username list file (one per line)                 | None (will enumerate) |
-| `-m`  | `--mode`        | Attack mode: `enumerate`, `xmlrpc`, `wplogin`, `restapi`, `all` | `enumerate` |
-|       | `--proxy`       | Proxy URL (e.g., `socks5h://localhost:9050`)      | None        |
-| `-t`  | `--threads`     | Number of threads (use with caution)               | `1`         |
-|       | `--delay`       | Delay between requests (seconds)                   | `1.0`       |
-|       | `--batch`       | Passwords per XML‑RPC multicall request            | `20`        |
-|       | `--timeout`     | Request timeout (seconds)                          | `15`        |
-|       | `--output`      | File to append found credentials                    | None        |
-|       | `--resume`      | File to store/check tested passwords (for resuming)| None        |
-|       | `--user-agents` | Custom User‑Agent file (one per line)              | Built‑in list |
-|       | `--no-banner`   | Suppress the ASCII banner                           | `False`     |
-
----
-
-## 🎯 Attack Modes
-
-| Mode        | Description                                                                 |
-|-------------|-----------------------------------------------------------------------------|
-| `enumerate` | Discover usernames (saves to `users.txt`) – no login attempts.              |
-| `xmlrpc`    | Use XML‑RPC `system.multicall` to test many passwords per request.          |
-| `wplogin`   | Traditional POST brute‑force against `wp-login.php`.                        |
-| `restapi`   | HTTP Basic Auth against `/wp-json/wp/v2/users/me`.                          |
-| `all`       | Run `xmlrpc` → `wplogin` → `restapi` for each username until success.      |
-
----
-
-## 📚 Examples
-
-### 1. Enumerate users
 ```bash
-python3 wp_toolkit.py -u https://example.com -m enumerate
+echo 'alias wlp="python3 -m WP_Log_Pose.main"' >> ~/.bashrc
+source ~/.bashrc
+
+# Then just use:
+wlp enumerate -u https://target.com
 ```
 
-### 2. XML‑RPC brute‑force with Tor proxy
+---
+
+## 🚀 Quick Start
+
 ```bash
-python3 wp_toolkit.py -u https://example.com -m xmlrpc -w rockyou.txt -U users.txt --proxy socks5h://localhost:9050 --delay 2 --batch 10 --timeout 30
+cd ~/Downloads
+
+# 1 — Enumerate usernames
+python3 -m WP_Log_Pose.main enumerate -u https://target.com --no-confirm
+
+# 2 — Run vulnerability scan
+python3 -m WP_Log_Pose.main vuln -u https://target.com --no-confirm
+
+# 3 — Brute-force with found users
+python3 -m WP_Log_Pose.main bruteforce \
+  -u https://target.com \
+  -w wordlist.txt \
+  -U users.txt \
+  --no-confirm
+
+# 4 — Let the tool do everything automatically
+python3 -m WP_Log_Pose.main auto \
+  -u https://target.com \
+  -w wordlist.txt \
+  --no-confirm
 ```
 
-### 3. wp‑login.php attack (local test, no proxy)
+---
+
+## 📋 Commands
+
+### `enumerate`
+
+Discovers WordPress usernames using 4 independent methods.
+
 ```bash
-python3 wp_toolkit.py -u http://localhost -m wplogin -w passwords.txt -U admin.txt --delay 1
+python3 -m WP_Log_Pose.main enumerate -u <URL> [options]
 ```
 
-### 4. All methods sequentially with output file
+**Methods used:**
+
+| Method | Endpoint | Description |
+|---|---|---|
+| REST API | `/wp-json/wp/v2/users` | Fetches public user list |
+| Author Archives | `/?author=1..20` | Follows redirects to extract slugs |
+| oEmbed | `/wp-json/oembed/1.0/embed` | Extracts author name from metadata |
+| Sitemap | `/sitemap.xml` | Parses XML for `/author/` URLs |
+
+**Example:**
 ```bash
-python3 wp_toolkit.py -u https://example.com -m all -w common.txt -U users.txt --output found.txt
+python3 -m WP_Log_Pose.main enumerate \
+  -u https://target.com \
+  --no-confirm \
+  -v
 ```
 
-### 5. Custom User‑Agent file
-Create `my_agents.txt` with one agent per line, then:
+**Output:**
+```
+  >>  User Enumeration
+  --------------------
+
+  [+]  2 user(s) discovered:
+
+       admin    [REST, AUTHOR]
+       editor   [REST]
+
+  [+]  Saved -> users.txt
+```
+
+---
+
+### `vuln`
+
+Runs a passive vulnerability and misconfiguration scan.
+
 ```bash
-python3 wp_toolkit.py -u https://example.com -m xmlrpc -w list.txt -U users.txt --user-agents my_agents.txt
+python3 -m WP_Log_Pose.main vuln -u <URL> [options]
+```
+
+**Checks performed:**
+
+| Check | Severity | Description |
+|---|---|---|
+| Security Headers | HIGH–LOW | CSP, X-Frame-Options, HSTS, etc. |
+| Directory Listing | MEDIUM | Open indexes on sensitive paths |
+| debug.log | HIGH | PHP debug log publicly readable |
+| XML-RPC | HIGH | xmlrpc.php enabled with multicall |
+| REST API Users | MEDIUM | Username list exposed without auth |
+| Path Disclosure | LOW | Filesystem paths in PHP errors |
+| Sensitive Files | CRITICAL | .env, wp-config.php.bak, .git/HEAD |
+| wp-cron.php | LOW | Publicly invocable cron endpoint |
+| Version Leak | INFO | WordPress version in generator tag |
+| Login Hardening | INFO | Default login URL, no rate-limiting |
+
+**Example:**
+```bash
+python3 -m WP_Log_Pose.main vuln \
+  -u https://target.com \
+  --no-confirm \
+  --output report.html \
+  --format html
 ```
 
 ---
 
-## 🎨 Configuration Summary UI
+### `bruteforce`
 
-Before any attack, the script displays a beautiful summary table with your settings, e.g.:
+Credential brute-force using one or all attack modes.
 
-```
-────────────────────────────────────────────────────────────────────────────────
-  🎯  Target URL          │ http://localhost
-  🚩  In-Scope URL        │ localhost
-  📖  Wordlist            │ /home/user/passwords.txt
-  👤  Usernames file      │ users.txt
-  🚀  Mode                │ xmlrpc
-  🔗  Proxy                │ socks5h://localhost:9050
-  ⚙️   Threads             │ 1
-  ⏱️   Delay (sec)         │ 2.0
-  📦  Batch size (XMLRPC) │ 10
-  ⏳  Timeout (sec)       │ 30
-  💾  Output file         │ found.txt
-  🔄  Resume file         │ None
-  🦡  User-Agent          │ Random (built-in)
-  📂  Users loaded        │ 1
-────────────────────────────────────────────────────────────────────────────────
+```bash
+python3 -m WP_Log_Pose.main bruteforce \
+  -u <URL> \
+  -w <wordlist> \
+  -U <usernames> \
+  -m <mode> \
+  [options]
 ```
 
----
+**Modes:**
 
-## 🔍 How It Works
+| Mode | Endpoint | Method |
+|---|---|---|
+| `xmlrpc` | `/xmlrpc.php` | `wp.getUsersBlogs` per thread |
+| `wplogin` | `/wp-login.php` | Form POST with cookie detection |
+| `restapi` | `/wp-json/wp/v2/users/me` | HTTP Basic Auth |
+| `all` | All of the above | Tries each in order, stops on first hit |
 
-### User Enumeration
-- **REST API**: Requests `/wp-json/wp/v2/users` and extracts `slug` fields.
-- **Author archives**: Sends requests to `/?author=1`, `/?author=2`, etc. and follows redirects to `/author/username/`.
-- **oEmbed**: Fetches `author_name` from `/wp-json/oembed/1.0/embed`.
+**Example:**
+```bash
+python3 -m WP_Log_Pose.main bruteforce \
+  -u https://target.com \
+  -w /usr/share/wordlists/rockyou.txt \
+  -U users.txt \
+  -m xmlrpc \
+  --threads 10 \
+  --delay 0 \
+  --no-confirm
+```
 
-### XML‑RPC Multicall Attack
-- Passwords are grouped into batches (size = `--batch`).
-- Each batch is sent as one `system.multicall` request containing multiple `wp.getUsersBlogs` calls.
-- The server returns an array of responses.
-- `_check_xmlrpc_success()` iterates through each response:
-  - Skips any `<value>` that contains a `<fault>` (failed login).
-  - Looks for a member `<name>` equal to `blogid`. If found, that password succeeded.
+**Output:**
+```
+[XMLRPC] Endpoint confirmed ✅  starting attack...
+[XMLRPC] Attacking 'admin'  threads=10
+  [XMLRPC] user=admin  tested=   150  [████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
 
-Why `<blogid>`? It is **always** present in a successful `wp.getUsersBlogs` response and never in a fault, making it a perfect success indicator.
-
-### wp‑login.php Attack
-- Sends POST data with `log`, `pwd`, `wp-submit`, `redirect_to`, `testcookie`.
-- Success is detected when the response does **not** contain `login_error` and the URL contains `wp-admin`.
-
-### REST API Attack
-- Uses HTTP Basic Authentication on `/wp-json/wp/v2/users/me`.
-- A `200 OK` response indicates valid credentials.
-
----
-
-## ⚠️ Batch Size Limits
-
-WordPress servers often limit the number of nested calls in a `system.multicall` request. If `--batch` exceeds this limit:
-- The server may return a **top‑level `<fault>`** (script skips the entire batch).
-- Or return an array where **every inner `<value>` is a `<fault>`** (script finds no success).
-
-**Always find the maximum working batch size for your target** by testing with a small wordlist containing a known‑good password. Start with `--batch 5` and increase until success stops appearing.
+  [!!!] SUCCESS  admin:password123
+```
 
 ---
 
-## 🐞 Troubleshooting
+### `auto`
 
-| Issue                          | Solution                                                                 |
-|--------------------------------|--------------------------------------------------------------------------|
-| No users found                 | Use a manual username list with `-U`.                                    |
-| XML‑RPC fails with larger batches | Reduce `--batch`.                                                        |
-| Proxy connection refused       | Ensure Tor/proxy is running; verify URL (e.g., `socks5h://localhost:9050`). |
-| `requests` module not found    | Install it: `pip install requests` (or use `pipx`/venv on Kali).        |
-| Script hangs                   | Press `Ctrl+C` to see traceback; check network/proxy.                   |
-| False positives                | Enable debug prints in `_check_xmlrpc_success()` to inspect raw XML.    |
+Detects all available attack vectors, enumerates users if needed, and attacks automatically using the best available method.
+
+```bash
+python3 -m WP_Log_Pose.main auto \
+  -u <URL> \
+  -w <wordlist> \
+  [options]
+```
+
+**Attack priority:** XML-RPC → REST API → wp-login.php
+
+**With `--safe`:** Runs vulnerability scan only — no brute-force.
+
+**Example:**
+```bash
+python3 -m WP_Log_Pose.main auto \
+  -u https://target.com \
+  -w rockyou.txt \
+  --threads 15 \
+  --no-confirm \
+  --output results.html \
+  --format html
+```
 
 ---
 
+## ⚙️ Options
+
+| Option | Short | Default | Description |
+|---|---|---|---|
+| `--url` | `-u` | required | Target WordPress URL |
+| `--wordlist` | `-w` | — | Path to password wordlist |
+| `--usernames` | `-U` | — | Path to username list |
+| `--mode` | `-m` | `all` | Attack mode: `xmlrpc` `wplogin` `restapi` `all` |
+| `--threads` | — | `10` | Concurrent worker threads |
+| `--delay` | — | `0.0` | Seconds between request chunks |
+| `--timeout` | — | `15` | HTTP socket timeout |
+| `--proxy` | — | — | Proxy URL e.g. `socks5h://127.0.0.1:9050` |
+| `--output` | — | — | Save results to file |
+| `--format` | — | `txt` | Output format: `txt json csv html md` |
+| `--safe` | — | False | Scan only, no brute-force |
+| `--config` | — | — | JSON config file |
+| `--no-confirm` | — | False | Skip authorisation prompt |
+| `--verbose` | `-v` | 0 | `-v` INFO, `-vv` DEBUG |
+
+---
+
+## 📄 Output Formats
+
+| Format | Command | Best for |
+|---|---|---|
+| `txt` | `--format txt` | Piping to other tools |
+| `json` | `--format json` | Automation, scripting |
+| `csv` | `--format csv` | Excel, Splunk, SIEM |
+| `html` | `--format html` | Client reports |
+| `md` | `--format md` | GitHub issues, wikis |
+
+**Generate an HTML report:**
+```bash
+python3 -m WP_Log_Pose.main vuln \
+  -u https://target.com \
+  --no-confirm \
+  --output report.html \
+  --format html
+```
+
+---
+
+## 💡 Examples
+
+**Full pentest workflow:**
+```bash
+TARGET="https://target.com"
+WORDLIST="/usr/share/wordlists/rockyou.txt"
+
+# Step 1 — Find users
+python3 -m WP_Log_Pose.main enumerate -u $TARGET --no-confirm
+
+# Step 2 — Scan for vulnerabilities
+python3 -m WP_Log_Pose.main vuln -u $TARGET --no-confirm --output vuln.html --format html
+
+# Step 3 — Brute-force
+python3 -m WP_Log_Pose.main bruteforce \
+  -u $TARGET -w $WORDLIST -U users.txt \
+  -m all --threads 10 --no-confirm \
+  --output creds.json --format json
+```
+
+**Behind a proxy:**
+```bash
+# Burp Suite
+python3 -m WP_Log_Pose.main vuln -u https://target.com \
+  --proxy http://127.0.0.1:8080 --no-confirm
+
+# Tor
+python3 -m WP_Log_Pose.main enumerate -u https://target.com \
+  --proxy socks5h://127.0.0.1:9050 --no-confirm
+```
+
+**Safe mode — scan only:**
+```bash
+python3 -m WP_Log_Pose.main auto \
+  -u https://target.com \
+  --safe --no-confirm \
+  --output scan.html --format html
+```
+
+**Verbose debug output:**
+```bash
+python3 -m WP_Log_Pose.main enumerate \
+  -u https://target.com \
+  --no-confirm -vv 2>debug.log
+```
+
+---
+
+## 📁 File Structure
+
+```
+WP_Log_Pose/
+├── __init__.py          Package init
+├── main.py              CLI entry point
+├── config.py            Defaults and config loader
+├── core_http.py         HTTP session and request helpers
+├── base.py              Abstract base class
+├── enumeration.py       User enumeration (4 methods)
+├── vuln_scanner.py      Vulnerability scanner (10 checks)
+├── reporting.py         Console output and file writers
+└── attacks/
+    ├── __init__.py
+    ├── xmlrpc.py        XML-RPC brute-force
+    ├── wplogin.py       wp-login.php brute-force
+    └── restapi.py       REST API brute-force
+```
+
+---
 
 ## Safety & legal
 
@@ -265,4 +412,3 @@ This tool is for **authorized security testing only**. Do not run it against sys
 📜 License
 
 This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as needed.
-
