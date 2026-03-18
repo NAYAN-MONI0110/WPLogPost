@@ -85,9 +85,14 @@ Python 3.10+
 requests
 urllib3
 ```
+## Install dependencies
 
-### Install dependencies
+**Kali Linux / Debian:**
+```bash
+pip install requests urllib3 --break-system-packages
+```
 
+**Other Linux / macOS:**
 ```bash
 pip install requests urllib3
 ```
